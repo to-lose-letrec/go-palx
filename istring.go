@@ -2,8 +2,6 @@ package main
 
 import "fmt"
 
-type bytePredicate func(c byte) bool
-
 type istring struct {
 	index  int
 	row    int
@@ -132,49 +130,3 @@ func findUnquotedChar(c byte) bytePredicate {
 	}
 }
 
-// Byte Predicates
-func whitespace(c byte) bool { return c == ' ' || c == '\t' }
-
-func wordChar(c byte) bool { return !whitespace(c) }
-
-func comment(c byte) bool { return c == ';' }
-
-// No need for hexadecimal here - the PDP-8 never used it.
-func binary(c byte) bool { return c == '0' || c == '1' }
-
-func octal(c byte) bool { return decimal(c) || (c >= '0' && c <= '7') }
-
-func decimal(c byte) bool { return (c >= '0' && c <= '9') }
-
-func alpha(c byte) bool {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-}
-
-func indirect(c byte) bool {
-	return c == '@'
-}
-
-func immediate(c byte) bool {
-	return c == '['
-}
-
-func labelStartChar(c byte) bool {
-	return alpha(c) || c == '_' || c == '.'
-}
-
-func labelChar(c byte) bool { return labelStartChar(c) || decimal(c) }
-
-func identifierStartChar(c byte) bool { return labelStartChar(c) }
-
-func identifierChar(c byte) bool { return labelChar(c) || c == ':' }
-
-func stringQuote(c byte) bool { return c == '"' || c == '\'' }
-
-
-func Foo() {
-	istr := newIstring(0, 1, "LD X,#0 '; Quoted comment' ; Trailing comment")
-
-	o := istr.stripTrailingComment()
-	fmt.Printf("stripTrailingComment() returned: %s\n",
-		o)
-}
